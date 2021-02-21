@@ -11,4 +11,5 @@ Usage:
 - "7" to decrease the fly speed
 
 Thanks to the guys from the CP77Modding Discord for all the great work and help! (https://discord.gg/cp77modding)
+
 This mod uses CPStyling: https://github.com/Nats-ji/CPStyling.lua
