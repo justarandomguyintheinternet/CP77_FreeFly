@@ -5,9 +5,10 @@ Installation:
 
 Usage:
 
-- "5" Activated the FreeFly Mode
-- "W" to fly forwards the direction the player is facing
-- "6" to increase the fly speed
-- "7" to decrease the fly speed
+- Use the CET Hotkeys menu to set the keys 
+- Tap a movement key once to start flying in that direction
+- Tap any of the set keys to cancel any movement
+
+More information on how to use and more can be found here: https://www.nexusmods.com/cyberpunk2077/mods/780
 
 Thanks to the guys from the CP77Modding Discord for all the great work and help! (https://discord.gg/cp77modding)
