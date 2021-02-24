@@ -1,6 +1,6 @@
 flyUtils = {}
 
-function flyUtils.tpStraightDirection(freefly, direction)
+function flyUtils.tpDirection(freefly, direction, angle)
     if (direction ~= "none") then
         if direction == "forward" or direction == "backward" then
           dir = Game.GetCameraSystem():GetActiveCameraForward()

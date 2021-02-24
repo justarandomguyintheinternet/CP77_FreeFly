@@ -8,6 +8,7 @@ local freefly = {
 	speedIncrementStep = 0.25,
 	counter = 0,
 	timeStep = 0.05,
+	angle = 0,
 
 	input = require("modules/ui/input"),
 	ui = require("modules/ui/mainUI"),
@@ -21,9 +22,9 @@ registerForEvent("onUpdate", function(deltaTime)
     if (freefly.counter > freefly.timeStep) then
 		freefly.counter = freefly.counter - freefly.timeStep
 	    if (freefly.active and freefly.moving) then
-			freefly.flyUtils.tpStraightDirection(freefly, freefly.moveDirection)
+			freefly.flyUtils.tpDirection(freefly, freefly.moveDirection, angle)
 		end
-    end	
+    end
 end)
 
 registerForEvent("onDraw", function()
