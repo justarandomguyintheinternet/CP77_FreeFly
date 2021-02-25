@@ -1,3 +1,5 @@
+-- This mod was created by keanuWheeze from CP2077 Modding Tools Discord.
+
 local freefly = {
 	description = "",
 	isUIVisible = false,
