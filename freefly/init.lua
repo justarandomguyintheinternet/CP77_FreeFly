@@ -1,4 +1,5 @@
 -- This mod was created by keanuWheeze from CP2077 Modding Tools Discord.
+-- Thanks to NonameNonumber and perfnormbeast for the new input method
 
 local freefly = {
 	description = "",
