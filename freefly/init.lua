@@ -1,117 +1,75 @@
-registerForEvent("onInit", function()
+-- This mod was created by keanuWheeze from CP2077 Modding Tools Discord.
+-- Thanks to NonameNonumber and perfnormbeast for the new input method
 
-	isVisible = false
+local freefly = {
+	description = "",
+	isUIVisible = false,
+	active = false,
+	moving = false,
+	moveDirection = "none",
+	counter = 0,
+	settings = {},
+	settingsDefault = {
+		loadDefault = false,
+		speed = 2,
+		speedIncrementStep = 0.2,
+		timeStep = 0.05,
+		angle = 0,
+		constantTp = false
+	},
 
-	move = false
-	active = false
-	moveDirection = "none"
+	input = require("modules/ui/input"),
+	ui = require("modules/ui/mainUI"),
+	grav = require("modules/utils/gravityUtils"),
+	flyUtils = require("modules/utils/flyUtils"),
+	miscUtils = require("modules/utils/miscUtils"),
+	CPS = require("CPStyling")
+}
 
-	counter = 0
-	speed = 1
+function freefly:new()
 
-	function noClipTp(direction)
-		if (direction ~= "none") then
-		    if direction == "forward" or direction == "backward" then
-		      dir = Game.GetCameraSystem():GetActiveCameraForward()
-		    elseif direction == "right" or direction == "left" then
-		      dir = Game.GetCameraSystem():GetActiveCameraRight()
-		    end
-		    pos = Game.GetPlayer():GetWorldPosition()
-		    if direction == "forward" or direction == "right" then
-					xNew = pos.x + (dir.x * speed)
-					yNew = pos.y + (dir.y * speed)
-					zNew = pos.z + (dir.z * speed)
-		    elseif direction == "backward" or direction == "left" then
-					xNew = pos.x - (dir.x * speed)
-					yNew = pos.y - (dir.y * speed)
-					zNew = pos.z - (dir.z * speed)
-		    elseif direction == "up" then
-					xNew = pos.x
-					yNew = pos.y
-					zNew = pos.z + (0.5 * speed)
-		    elseif direction == "down" then
-					xNew = pos.x
-					yNew = pos.y
-					zNew = pos.z - (0.5 * speed)
-		    end
-		    tpTo = Vector4.new(xNew,yNew,zNew,pos.w)
-		    Game.GetTeleportationFacility():Teleport(Game.GetPlayer(), tpTo , EulerAngles.new(0,0,Game.GetPlayer():GetWorldYaw()))
-			Game.Heal("100000", "0")
-		end
-	end	
-
-
-end)
-
-registerForEvent("onDraw", function()
-	if (isVisible) then
-		ImGui.SetNextWindowSize(100,65)
-		if (ImGui.Begin("FreeFly")) then
-			ImGui.Text(string.format("Speed: %.1f", speed))
-		end
-	end
-	ImGui.End()
-end)
+	registerForEvent('onInit', function()
+		freefly.miscUtils.loadStandardFile(freefly)
+		freefly.input.startInputObserver(freefly)
+	end)
 
 registerForEvent("onUpdate", function(deltaTime)
-	counter = counter + deltaTime
-    if (counter > 0.05) then
-    counter = counter - 0.05
-	    if (active and move) then
-			noClipTp(moveDirection)
-		end
-    end	
-end)
+	freefly.counter = freefly.counter + deltaTime
+    if (freefly.counter > freefly.settings.timeStep) then
+		freefly.counter = freefly.counter - freefly.settings.timeStep
 
-registerHotkey("freeflyActivation", "ActivationKey", function()	
-	active = not active
-	moveDirection = "none"
-	move = false
-	if (active) then
-      Game.SetTimeDilation(0.00001)
-    elseif not (active) then
-      Game.SetTimeDilation(0)
+	    if (freefly.active and freefly.input.isMoving and not freefly.constantTp) then
+			freefly.flyUtils.fly(freefly, freefly.input.currentDirections, freefly.settings.angle)
+			Game.Heal("100000", "0")
+		elseif (freefly.active and not freefly.input.isMoving and freefly.settings.constantTp) then
+			Game.GetTeleportationFacility():Teleport(Game.GetPlayer(), Game.GetPlayer():GetWorldPosition() , EulerAngles.new(0,0,Game.GetPlayer():GetWorldYaw()))
+			Game.Heal("100000", "0")
+		end
+
     end
 end)
 
-registerHotkey("freeflyMoveForward", "MoveForwardKey", function()
-	move = not move
-	moveDirection = "forward"
+registerForEvent("onDraw", function()
+	if freefly.isUIVisible then	
+		freefly.ui.draw(freefly)
+	end
+end)   
+
+registerHotkey("freeflyActivation", "ActivationKey", function()	
+	freefly.active = not freefly.active
+	freefly.moveDirection = "none"
+	freefly.moving = false
+	if freefly.active and not freefly.settings.constantTp then
+		freefly.grav.gravOff()
+	else
+		freefly.grav.gravOn()
+	end
 end)
 
-registerHotkey("freeflyMoveBackwards", "MoveBackwardsKey", function()
-	move = not move
-	moveDirection = "backward"
+registerHotkey("flymodgui", "Toggle window", function()
+	freefly.isUIVisible = not freefly.isUIVisible
 end)
 
-registerHotkey("freeflyMoveRight", "MoveRightKey", function()
-	move = not move
-	moveDirection = "right"
-end)
+end
 
-registerHotkey("freeflyMoveLeft", "MoveLeftKey", function()
-	move = not move
-	moveDirection = "left"
-end)
-
-registerHotkey("freeflyMoveUp", "MoveUpKey", function()
-	move = not move
-	moveDirection = "up"
-end)
-
-registerHotkey("freeflyMoveDown", "MoveDownKey", function()
-	move = not move
-	moveDirection = "down"
-end)
-
-registerHotkey("freeflyMoreSpeed", "More Speed", function()
-	speed = speed + 0.5
-end)
-
-registerHotkey("freeflylLessSpeed", "Less Speed", function()
-	speed = speed - 0.5
-end)
-
-registerHotkey("flymodgui", "Trigger window", function()
-	isVisible = not isVisible
-end)
+return freefly:new()
