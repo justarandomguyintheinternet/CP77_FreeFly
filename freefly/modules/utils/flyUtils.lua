@@ -1,34 +1,34 @@
 flyUtils = {}
 
-function flyUtils.tpDirection(freefly, direction, angle)
-    if (direction ~= "none") then
-        if direction == "forward" or direction == "backward" then
+function flyUtils.fly(freefly, directions, angle)
+        newPos = Game.GetPlayer():GetWorldPosition()
+        for directionKey, state in pairs(directions) do
+                if state == true then
+                        flyUtils.calculateNewPos(freefly, directionKey, newPos)
+                end
+        end
+        Game.GetTeleportationFacility():Teleport(Game.GetPlayer(), newPos , EulerAngles.new(0,0,Game.GetPlayer():GetWorldYaw() + angle))
+end
+
+function flyUtils.calculateNewPos(freefly, direction, newPos)
+        if direction == "forward" or direction == "backwards" then
           dir = Game.GetCameraSystem():GetActiveCameraForward()
-        elseif direction == "right" or direction == "left" then
+        elseif direction == "right" or direction == "left" or direction == "upleft" then
           dir = Game.GetCameraSystem():GetActiveCameraRight()
         end
-        pos = Game.GetPlayer():GetWorldPosition()
         if direction == "forward" or direction == "right" then
-                xNew = pos.x + (dir.x * freefly.speed)
-                yNew = pos.y + (dir.y * freefly.speed)
-                zNew = pos.z + (dir.z * freefly.speed)
-        elseif direction == "backward" or direction == "left" then
-                xNew = pos.x - (dir.x * freefly.speed)
-                yNew = pos.y - (dir.y * freefly.speed)
-                zNew = pos.z - (dir.z * freefly.speed)
+                newPos.x = newPos.x + (dir.x * freefly.speed)
+                newPos.y = newPos.y + (dir.y * freefly.speed)
+                newPos.z = newPos.z + (dir.z * freefly.speed)
+        elseif direction == "backwards" or direction == "left" then
+                newPos.x = newPos.x - (dir.x * freefly.speed)
+                newPos.y = newPos.y - (dir.y * freefly.speed)
+                newPos.z = newPos.z - (dir.z * freefly.speed)
         elseif direction == "up" then
-                xNew = pos.x
-                yNew = pos.y
-                zNew = pos.z + (0.5 * freefly.speed)
+                newPos.z = newPos.z + (0.7 * freefly.speed)
         elseif direction == "down" then
-                xNew = pos.x
-                yNew = pos.y
-                zNew = pos.z - (0.5 * freefly.speed)
+                newPos.z = newPos.z - (0.7 * freefly.speed)
         end
-        tpTo = Vector4.new(xNew,yNew,zNew,pos.w)
-        Game.GetTeleportationFacility():Teleport(Game.GetPlayer(), tpTo , EulerAngles.new(0,0,Game.GetPlayer():GetWorldYaw()))
-        Game.Heal("100000", "0")
-    end
 end
 
 return flyUtils

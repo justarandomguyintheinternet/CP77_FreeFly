@@ -12,17 +12,22 @@ local freefly = {
 
 	input = require("modules/ui/input"),
 	ui = require("modules/ui/mainUI"),
+	grav = require("modules/utils/gravityUtils"),
 	flyUtils = require("modules/utils/flyUtils")
 }
 
 function freefly:new()
 
+	registerForEvent('onInit', function()
+		freefly.input.startInputObserver()
+	end)
+
 registerForEvent("onUpdate", function(deltaTime)
 	freefly.counter = freefly.counter + deltaTime
     if (freefly.counter > freefly.timeStep) then
 		freefly.counter = freefly.counter - freefly.timeStep
-	    if (freefly.active and freefly.moving) then
-			freefly.flyUtils.tpDirection(freefly, freefly.moveDirection, angle)
+	    if (freefly.active and freefly.input.isMoving) then
+			freefly.flyUtils.fly(freefly, freefly.input.currentDirections, 0)
 		end
     end
 end)
@@ -37,30 +42,11 @@ registerHotkey("freeflyActivation", "ActivationKey", function()
 	freefly.active = not freefly.active
 	freefly.moveDirection = "none"
 	freefly.moving = false
-end)
-
-registerHotkey("freeflyMoveForward", "MoveForwardKey", function()
-	freefly.input.movementKey(freefly, "forward")
-end)
-
-registerHotkey("freeflyMoveBackwards", "MoveBackwardsKey", function()
-	freefly.input.movementKey(freefly, "backward")
-end)
-
-registerHotkey("freeflyMoveRight", "MoveRightKey", function()
-	freefly.input.movementKey(freefly, "right")
-end)
-
-registerHotkey("freeflyMoveLeft", "MoveLeftKey", function()
-	freefly.input.movementKey(freefly, "left")
-end)
-
-registerHotkey("freeflyMoveUp", "MoveUpKey", function()
-	freefly.input.movementKey(freefly, "up")
-end)
-
-registerHotkey("freeflyMoveDown", "MoveDownKey", function()
-	freefly.input.movementKey(freefly, "down")
+	if freefly.active then
+		freefly.grav.gravOff()
+	else
+		freefly.grav.gravOn()
+	end
 end)
 
 registerHotkey("freeflyMoreSpeed", "More Speed", function()
