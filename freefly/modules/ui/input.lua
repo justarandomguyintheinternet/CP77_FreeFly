@@ -7,7 +7,8 @@ input = {
         left = false,
         up = false,
         down = false
-    }
+    },
+    speedUp = false
 }
 
 function input.startInputObserver(freefly)
@@ -49,6 +50,26 @@ function input.startInputObserver(freefly)
                 input.currentDirections.up = true
             elseif actionType == 'BUTTON_RELEASED' then
                 input.currentDirections.up = false
+            end
+        elseif actionName == 'ChoiceScrollUp'then
+            if actionType == 'BUTTON_PRESSED'then
+                if freefly.active then
+                    freefly.settings.speed = freefly.settings.speed + freefly.settings.speedIncrementStep
+                    freefly.miscUtils.saveConfig(freefly)
+                end
+                if freefly.settings.speed < 0 then
+                    freefly.settings.speed = 0
+                end
+            end
+        elseif actionName == 'ChoiceScrollDown'then
+            if actionType == 'BUTTON_PRESSED'then
+                if freefly.active then
+                    freefly.settings.speed = freefly.settings.speed - freefly.settings.speedIncrementStep
+                    freefly.miscUtils.saveConfig(freefly)
+                end
+                if freefly.settings.speed < 0 then
+                    freefly.settings.speed = 0
+                end
             end
         end
           
