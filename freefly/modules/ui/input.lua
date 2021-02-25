@@ -14,7 +14,7 @@ function input.startInputObserver(freefly)
     Observe('PlayerPuppet', 'OnAction', function(action)
         local actionName = Game.NameToString(action:GetName(action))
         local actionType = action:GetType(action).value
-        if actionName == 'Forward'then
+        if actionName == 'Forward' then
             if actionType == 'BUTTON_PRESSED' then
                 input.currentDirections.forward = true
             elseif actionType == 'BUTTON_RELEASED' then

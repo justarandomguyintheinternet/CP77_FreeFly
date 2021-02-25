@@ -37,7 +37,6 @@ registerForEvent("onUpdate", function(deltaTime)
 	freefly.counter = freefly.counter + deltaTime
     if (freefly.counter > freefly.settings.timeStep) then
 		freefly.counter = freefly.counter - freefly.settings.timeStep
-
 	    if (freefly.active and freefly.input.isMoving and not freefly.constantTp) then
 			freefly.flyUtils.fly(freefly, freefly.input.currentDirections, freefly.settings.angle)
 			Game.Heal("100000", "0")
@@ -45,8 +44,10 @@ registerForEvent("onUpdate", function(deltaTime)
 			Game.GetTeleportationFacility():Teleport(Game.GetPlayer(), Game.GetPlayer():GetWorldPosition() , EulerAngles.new(0,0,Game.GetPlayer():GetWorldYaw()))
 			Game.Heal("100000", "0")
 		end
-
     end
+	if freefly.active and not freefly.settings.constantTp then
+		freefly.grav.gravOff()
+	end
 end)
 
 registerForEvent("onDraw", function()
@@ -54,6 +55,10 @@ registerForEvent("onDraw", function()
 		freefly.ui.draw(freefly)
 	end
 end)   
+
+registerForEvent("onOverlayOpen", function()
+    freefly.isUIVisible = true
+end)
 
 registerHotkey("freeflyActivation", "ActivationKey", function()	
 	freefly.active = not freefly.active
