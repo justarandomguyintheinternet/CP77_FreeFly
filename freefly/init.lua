@@ -4,28 +4,34 @@ local freefly = {
 	active = false,
 	moving = false,
 	moveDirection = "none",
-	speed = 1,
-	speedIncrementStep = 0.25,
 	counter = 0,
-	timeStep = 0.05,
-	angle = 0,
+	settings = {},
+	settingsDefault = {
+		loadDefault = false,
+		speed = 1,
+		speedIncrementStep = 0.25,
+		timeStep = 0.05,
+		angle = 0,
+	},
 
 	input = require("modules/ui/input"),
 	ui = require("modules/ui/mainUI"),
 	grav = require("modules/utils/gravityUtils"),
-	flyUtils = require("modules/utils/flyUtils")
+	flyUtils = require("modules/utils/flyUtils"),
+	miscUtils = require("modules/utils/miscUtils")
 }
 
 function freefly:new()
 
 	registerForEvent('onInit', function()
+		freefly.miscUtils.loadStandardFile(freefly)
 		freefly.input.startInputObserver()
 	end)
 
 registerForEvent("onUpdate", function(deltaTime)
 	freefly.counter = freefly.counter + deltaTime
-    if (freefly.counter > freefly.timeStep) then
-		freefly.counter = freefly.counter - freefly.timeStep
+    if (freefly.counter > freefly.settings.timeStep) then
+		freefly.counter = freefly.counter - freefly.settings.timeStep
 	    if (freefly.active and freefly.input.isMoving) then
 			freefly.flyUtils.fly(freefly, freefly.input.currentDirections, 0)
 		end
@@ -50,11 +56,13 @@ registerHotkey("freeflyActivation", "ActivationKey", function()
 end)
 
 registerHotkey("freeflyMoreSpeed", "More Speed", function()
-	freefly.speed = freefly.speed + freefly.speedIncrementStep
+	freefly.settings.speed = freefly.settings.speed + freefly.settings.speedIncrementStep
+	freefly.miscUtils.saveConfig(freefly)
 end)
 
 registerHotkey("freeflylLessSpeed", "Less Speed", function()
-	freefly.speed = freefly.speed - freefly.speedIncrementStep
+	freefly.settings.speed = freefly.settings.speed - freefly.settings.speedIncrementStep
+	freefly.miscUtils.saveConfig(freefly)
 end)
 
 registerHotkey("flymodgui", "Toggle window", function()
