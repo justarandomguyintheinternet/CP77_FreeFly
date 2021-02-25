@@ -37,8 +37,10 @@ registerForEvent("onUpdate", function(deltaTime)
 
 	    if (freefly.active and freefly.input.isMoving and not freefly.constantTp) then
 			freefly.flyUtils.fly(freefly, freefly.input.currentDirections, freefly.settings.angle)
+			Game.Heal("100000", "0")
 		elseif (freefly.active and not freefly.input.isMoving and freefly.settings.constantTp) then
 			Game.GetTeleportationFacility():Teleport(Game.GetPlayer(), Game.GetPlayer():GetWorldPosition() , EulerAngles.new(0,0,Game.GetPlayer():GetWorldYaw()))
+			Game.Heal("100000", "0")
 		end
 
     end
