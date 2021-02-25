@@ -1,17 +1,18 @@
 mainUI = {
-	advancedSettingsUI = require("modules/ui/advancedSettingsUI")
+	advancedSettingsUI = require("modules/ui/advancedSettingsUI"),
+	generalSettingsUI = require("modules/ui/generalSettingsUI")
 }
 
 function mainUI.draw(freefly)
 	freefly.CPS.setThemeBegin()
 	if (ImGui.Begin("FreeFly 1.5")) then
-    	ImGui.SetWindowSize(400, 200)
+    	ImGui.SetWindowSize(415, 150)
 
 		if ImGui.BeginTabBar("Tabbar", ImGuiTabBarFlags.NoTooltip) then
 			freefly.CPS.styleBegin("TabRounding", 0)
 	
 			if ImGui.BeginTabItem("General Settings") then
-
+				mainUI.generalSettingsUI.draw(freefly)
 				ImGui.EndTabItem()
 			end
 	
@@ -27,10 +28,3 @@ function mainUI.draw(freefly)
 end
 
 return mainUI
-
--- ImGui.Text(string.format("Speed: %.1f", freefly.settings.speed))
--- 		freefly.settings.loadDefault, changed = ImGui.Checkbox("Keep config", freefly.settings.loadDefault)
--- 		if changed then
--- 			freefly.miscUtils.saveConfig(freefly)
--- 		end
--- 		tooltips.drawBtn(freefly, "?", "test")

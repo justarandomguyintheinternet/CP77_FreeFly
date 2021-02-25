@@ -8,8 +8,8 @@ local freefly = {
 	settings = {},
 	settingsDefault = {
 		loadDefault = false,
-		speed = 1,
-		speedIncrementStep = 0.25,
+		speed = 2,
+		speedIncrementStep = 0.2,
 		timeStep = 0.05,
 		angle = 0,
 		constantTp = false
@@ -34,11 +34,13 @@ registerForEvent("onUpdate", function(deltaTime)
 	freefly.counter = freefly.counter + deltaTime
     if (freefly.counter > freefly.settings.timeStep) then
 		freefly.counter = freefly.counter - freefly.settings.timeStep
+
 	    if (freefly.active and freefly.input.isMoving and not freefly.constantTp) then
-			freefly.flyUtils.fly(freefly, freefly.input.currentDirections, 0)
+			freefly.flyUtils.fly(freefly, freefly.input.currentDirections, freefly.settings.angle)
 		elseif (freefly.active and not freefly.input.isMoving and freefly.settings.constantTp) then
 			Game.GetTeleportationFacility():Teleport(Game.GetPlayer(), Game.GetPlayer():GetWorldPosition() , EulerAngles.new(0,0,Game.GetPlayer():GetWorldYaw()))
 		end
+
     end
 end)
 

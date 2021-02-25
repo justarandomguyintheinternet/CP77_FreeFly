@@ -22,7 +22,7 @@ function asUI.draw(freefly)
 		end
 		asUI.tooltips.drawBtn(freefly, "?", "keepConfig")
 
-        pressed = ImGui.Button("Reset settings")
+        pressed = ImGui.Button("Reset all settings")
         if pressed then
             freefly.settings = freefly.miscUtils.deepcopy(freefly.settingsDefault)
             freefly.miscUtils.saveConfig(freefly)

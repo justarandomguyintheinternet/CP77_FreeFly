@@ -8,7 +8,6 @@ input = {
         up = false,
         down = false
     },
-    speedUp = false
 }
 
 function input.startInputObserver(freefly)
