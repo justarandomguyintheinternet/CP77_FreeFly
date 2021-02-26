@@ -77,6 +77,7 @@ end)
 
 registerHotkey("flymodsweitchangle", "Invert turning angle", function()
 	freefly.settings.angle = -freefly.settings.angle
+	freefly.miscUtils.saveConfig(freefly)
 end)
 
 end
