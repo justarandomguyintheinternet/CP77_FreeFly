@@ -32,6 +32,10 @@ function tooltips.drawBtn(freefly, label, key)
             freefly.CPS.CPToolTip1Begin(250, 60)
             ImGui.TextWrapped("This is the value by which the speed gets increased / decreased when scrolling")
             freefly.CPS.CPToolTip1End()
+        elseif key == "speed" then
+            freefly.CPS.CPToolTip1Begin(250, 70)
+            ImGui.TextWrapped("This controls the speed you are flying at, can also be changed using mouse wheel up/down (Only while freefly mode is active)")
+            freefly.CPS.CPToolTip1End()
         elseif key == "angle" then
             freefly.CPS.CPToolTip1Begin(275, 110)
             ImGui.TextWrapped("Changing this value makes you fly in curves / circles. Combine this with some multidirectional movement (Right and forward), a low TP Delay value and Constant TP on (Both can be found in the advanced tab) to get some really cinematic shots")
