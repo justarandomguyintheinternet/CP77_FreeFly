@@ -7,7 +7,7 @@ function gsUI.draw(freefly)
     if changed then
 		freefly.miscUtils.saveConfig(freefly)
 	end
-
+    gsUI.tooltips.drawBtn(freefly, "?", "speed")
     freefly.settings.speedIncrementStep, changed = ImGui.SliderFloat("Increase amount", freefly.settings.speedIncrementStep, 0, 5, "%.1f")
     if changed then
 		freefly.miscUtils.saveConfig(freefly)

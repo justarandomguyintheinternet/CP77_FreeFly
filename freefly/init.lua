@@ -75,6 +75,10 @@ registerHotkey("flymodgui", "Toggle window", function()
 	freefly.isUIVisible = not freefly.isUIVisible
 end)
 
+registerHotkey("flymodsweitchangle", "Invert turning angle", function()
+	freefly.settings.angle = -freefly.settings.angle
+end)
+
 end
 
 return freefly:new()
