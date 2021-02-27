@@ -60,6 +60,10 @@ registerForEvent("onOverlayOpen", function()
     freefly.isUIVisible = true
 end)
 
+registerForEvent("onOverlayClose", function()
+    freefly.isUIVisible = false
+end)
+
 registerHotkey("freeflyActivation", "ActivationKey", function()	
 	freefly.active = not freefly.active
 	freefly.moveDirection = "none"
