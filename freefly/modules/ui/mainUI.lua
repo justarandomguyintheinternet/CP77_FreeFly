@@ -4,8 +4,8 @@ mainUI = {
 }
 
 function mainUI.draw(freefly)
-	freefly.CPS.setThemeBegin()
-	if (ImGui.Begin("FreeFly 1.6")) then
+	freefly.CPS:setThemeBegin()
+	if (ImGui.Begin("FreeFly 1.61")) then
     	ImGui.SetWindowSize(415, 150)
 
 		if ImGui.BeginTabBar("Tabbar", ImGuiTabBarFlags.NoTooltip) then
@@ -27,7 +27,7 @@ function mainUI.draw(freefly)
 		
 	end
 	ImGui.End()
-	freefly.CPS.setThemeEnd()
+	freefly.CPS:setThemeEnd()
 end
 
 return mainUI

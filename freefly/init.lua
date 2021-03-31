@@ -23,12 +23,13 @@ local freefly = {
 	grav = require("modules/utils/gravityUtils"),
 	flyUtils = require("modules/utils/flyUtils"),
 	miscUtils = require("modules/utils/miscUtils"),
-	CPS = require("CPStyling")
+	CPS = nil
 }
 
 function freefly:new()
 
 	registerForEvent('onInit', function()
+		freefly.CPS = GetMod("CPStyling"):New()
 		freefly.miscUtils.loadStandardFile(freefly)
 		freefly.input.startInputObserver(freefly)
 	end)
