@@ -27,7 +27,7 @@ function miscUtil.loadStandardFile(freefly)
         file:write(jconfig)
         file:close()
     end
-    
+
     local file = io.open("config/config.json", "r")
     local config = json.decode(file:read("*a"))
     file:close()
@@ -36,6 +36,11 @@ function miscUtil.loadStandardFile(freefly)
     else
         freefly.settings = freefly.miscUtils.deepcopy(freefly.settingsDefault)
     end
+
+    if freefly.settings.noWeapon == nil then --Ugly backwards compatibility
+        freefly.settings.noWeapon = true
+    end
+
 end
 
 function miscUtil.saveConfig(freefly)
@@ -43,6 +48,15 @@ function miscUtil.saveConfig(freefly)
     local jconfig = json.encode(freefly.settings)
     file:write(jconfig)
     file:close()
+end
+
+function miscUtil.tryNoWeapon(freefly, state)
+    if freefly.settings.noWeapon and state then
+        Game.ApplyEffectOnPlayer("GameplayRestriction.NoCombat")
+    else
+        local rmStatus = Game['StatusEffectHelper::RemoveStatusEffect;GameObjectTweakDBID']
+        rmStatus(Game.GetPlayer(), "GameplayRestriction.NoCombat")
+    end
 end
 
 return miscUtil

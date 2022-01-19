@@ -1,7 +1,7 @@
 flyUtils = {}
 
 function flyUtils.fly(freefly, directions, angle)
-        newPos = Game.GetPlayer():GetWorldPosition()
+        local newPos = Game.GetPlayer():GetWorldPosition()
         for directionKey, state in pairs(directions) do
                 if state == true then
                         flyUtils.calculateNewPos(freefly, directionKey, newPos)
@@ -11,7 +11,22 @@ function flyUtils.fly(freefly, directions, angle)
 end
 
 function flyUtils.calculateNewPos(freefly, direction, newPos)
-        speed = freefly.settings.speed / 2
+        local speed = freefly.settings.speed / 2
+
+        if direction == "forward" then
+                speed = speed * freefly.input.analogForward
+        elseif direction == "backwards" then
+                speed = speed * freefly.input.analogBackwards
+        elseif direction == "right" then
+                speed = speed * freefly.input.analogRight
+        elseif direction == "left" then
+                speed = speed * freefly.input.analogLeft
+        elseif direction == "up" then
+                speed = speed * freefly.input.analogUp
+        elseif direction == "down" then
+                speed = speed * freefly.input.analogDown
+        end
+
         if direction == "forward" or direction == "backwards" then
           dir = Game.GetCameraSystem():GetActiveCameraForward()
         elseif direction == "right" or direction == "left" or direction == "upleft" then

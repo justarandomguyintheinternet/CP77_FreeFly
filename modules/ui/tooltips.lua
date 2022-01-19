@@ -40,6 +40,10 @@ function tooltips.drawBtn(freefly, label, key)
             freefly.CPS.CPToolTip1Begin(275, 110)
             ImGui.TextWrapped("Changing this value makes you fly in curves / circles. Combine this with some multidirectional movement (Right and forward), a low TP Delay value and Constant TP on (Both can be found in the advanced tab) to get some really cinematic shots")
             freefly.CPS.CPToolTip1End()
+        elseif key == "noWeapon" then
+            freefly.CPS.CPToolTip1Begin(275, 60)
+            ImGui.TextWrapped("Use this option to disable weapons during flight, to avoid scrolling through them when changing speed.")
+            freefly.CPS.CPToolTip1End()
         end
     end
 end
