@@ -1,92 +1,104 @@
+-------------------------------------------------------------------------------------------------------------------------------
 -- This mod was created by keanuWheeze from CP2077 Modding Tools Discord.
--- Thanks to psiberx and perfnormbeast for the input method
+--
+-- You are free to use this mod as long as you follow the following license guidelines:
+--    * It may not be uploaded to any other site without my express permission.
+--    * Using any code contained herein in another mod requires credits / asking me.
+--    * You may not fork this code and make your own competing version of this mod available for download without my permission.
+-------------------------------------------------------------------------------------------------------------------------------
 
-local freefly = {
-	isUIVisible = false,
-	active = false,
-	moving = false,
-	moveDirection = "none",
-	counter = 0,
-	settings = {},
-	settingsDefault = {
-		loadDefault = true,
+local GameUI = require("modules/utils/GameUI")
+
+freefly = {
+    runtimeData = {
+        inMenu = false,
+        inGame = false,
+        cetOpen = false,
+        active = false
+    },
+    settings = {},
+    defaultSettings = {
 		speed = 2,
 		speedIncrementStep = 0.2,
-		timeStep = 0.05,
 		angle = 0,
-		constantTp = false,
-		noWeapon = true
-	},
-
-	input = require("modules/ui/input"),
-	ui = require("modules/ui/mainUI"),
-	grav = require("modules/utils/gravityUtils"),
-	flyUtils = require("modules/utils/flyUtils"),
-	miscUtils = require("modules/utils/miscUtils"),
-	CPS = require("CPStyling")
+		noWeapon = true,
+        timeStop = false
+    },
+    config = require("modules/utils/config"),
+    ui = require("modules/ui/generalSettingsUI"),
+    logic = require("modules/utils/logic"),
+    nUI = require("modules/ui/settingsUI")
 }
 
 function freefly:new()
+    registerForEvent("onInit", function()
+        self.config.tryCreateConfig("config/config.json", self.defaultSettings)
+        self.config.backwardComp("config/config.json", self.defaultSettings)
+        self.settings = self.config.loadFile("config/config.json")
 
-	registerForEvent('onInit', function()
-		freefly.miscUtils.loadStandardFile(freefly)
-		freefly.input.startInputObserver(freefly)
-		freefly.input.startListeners(Game.GetPlayer())
-	end)
+        Observe('RadialWheelController', 'OnIsInMenuChanged', function(_, isInMenu) -- Setup observer and GameUI to detect inGame / inMenu
+            self.runtimeData.inMenu = isInMenu
+        end)
 
-registerForEvent("onUpdate", function(deltaTime)
-	freefly.counter = freefly.counter + deltaTime
-    if (freefly.counter > freefly.settings.timeStep) then
-		freefly.counter = freefly.counter - freefly.settings.timeStep
-	    if (freefly.active and freefly.input.isMoving and not freefly.constantTp) then
-			freefly.flyUtils.fly(freefly, freefly.input.currentDirections, freefly.settings.angle)
-			Game.Heal("100000", "0")
-		elseif (freefly.active and not freefly.input.isMoving and freefly.settings.constantTp) then
-			Game.GetTeleportationFacility():Teleport(Game.GetPlayer(), Game.GetPlayer():GetWorldPosition() , EulerAngles.new(0,0,Game.GetPlayer():GetWorldYaw()))
-			Game.Heal("100000", "0")
-		end
-    end
-	if freefly.active and not freefly.settings.constantTp then
-		freefly.grav.gravOff()
-	end
-	freefly.input.time = freefly.input.time + deltaTime
-end)
+        GameUI.OnSessionStart(function()
+            self.runtimeData.inGame = true
+            self.logic.registerInput(GetPlayer())
+        end)
 
-registerForEvent("onDraw", function()
-	if freefly.isUIVisible and freefly.CPS ~= nil then
-		freefly.ui.draw(freefly)
-	end
-end)
+        GameUI.OnSessionEnd(function()
+            self.runtimeData.inGame = false
+        end)
 
-registerForEvent("onOverlayOpen", function()
-    freefly.isUIVisible = true
-end)
+        self.runtimeData.inGame = not GameUI.IsDetached() -- Required to check if ingame after reloading all mods
+        self.logic.registerObservers(self)
 
-registerForEvent("onOverlayClose", function()
-    freefly.isUIVisible = false
-end)
+        Override("ZoomEventsTransition", "OnEnter", function (_, context, interface, wrapped)
+            if self.runtimeData.active then return end
+            wrapped(context, interface)
+        end)
 
-registerHotkey("freeflyActivation", "ActivationKey", function()	
-	freefly.active = not freefly.active
-	freefly.miscUtils.tryNoWeapon(freefly, freefly.active)
-	freefly.moveDirection = "none"
-	freefly.moving = false
-	if freefly.active and not freefly.settings.constantTp then
-		freefly.grav.gravOff()
-	else
-		freefly.grav.gravOn()
-	end
-end)
+        self.nUI.setupNative(self)
+    end)
 
-registerHotkey("flymodgui", "Toggle window", function()
-	freefly.isUIVisible = not freefly.isUIVisible
-end)
+    registerForEvent("onUpdate", function(deltaTime)
+        if not self.runtimeData.inMenu and self.runtimeData.inGame and self.runtimeData.active then
+            self.logic.fly(self, deltaTime)
+        end
+        self.logic.time = self.logic.time + deltaTime
+    end)
 
-registerHotkey("flymodsweitchangle", "Invert turning angle", function()
-	freefly.settings.angle = -freefly.settings.angle
-	freefly.miscUtils.saveConfig(freefly)
-end)
+    registerForEvent("onDraw", function()
+        if not self.runtimeData.cetOpen then return end
+        self.ui.draw(self)
+    end)
 
+    registerForEvent("onOverlayOpen", function()
+        self.runtimeData.cetOpen = true
+    end)
+
+    registerForEvent("onOverlayClose", function()
+        self.runtimeData.cetOpen = false
+    end)
+
+    registerForEvent("onShutdown", function()
+        if self.runtimeData.active then
+            Game.RemoveEffectPlayer("GameplayRestriction.NoMovement")
+            Game.RemoveEffectPlayer("GameplayRestriction.NoZooming")
+            Game.RemoveEffectPlayer("GameplayRestriction.NoCombat")
+        end
+    end)
+
+    registerHotkey("flymodsweitchangle", "Invert turning angle", function()
+        self.settings.angle = -self.settings.angle
+        self.config.saveFile("config/config.json", self.settings)
+    end)
+
+    registerHotkey("freeflyActivation", "ActivationKey", function()
+        self.runtimeData.active = not self.runtimeData.active
+        self.logic.toggleFlight(self, self.runtimeData.active)
+    end)
+
+    return self
 end
 
 return freefly:new()

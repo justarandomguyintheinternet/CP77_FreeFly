@@ -1,0 +1,28 @@
+name: pack
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  pack:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup folder
+        run: |
+          cd ${{ github.workspace }}
+          sudo mkdir -p /freeflyPacked/bin/x64/plugins/cyber_engine_tweaks/mods/freefly/
+      - name: Copy files
+        run: |
+          sudo cp -r CPStyling /freeflyPacked/bin/x64/plugins/cyber_engine_tweaks/mods/freefly/
+          sudo cp -r config /freeflyPacked/bin/x64/plugins/cyber_engine_tweaks/mods/freefly/
+          sudo cp -r modules /freeflyPacked/bin/x64/plugins/cyber_engine_tweaks/mods/freefly/
+          sudo cp -r init.lua /freeflyPacked/bin/x64/plugins/cyber_engine_tweaks/mods/freefly/
+      - name: Upload zip
+        uses: actions/upload-artifact@v2
+        with:
+            name: arcadeSystemPacked
+            path: /freeflyPacked/

@@ -190,7 +190,7 @@ function input.startInputObserver(freefly)
                 end
             end
         end
-          
+
         input.isMoving = false
         for _, v in pairs(input.currentDirections) do
             if v == true then
