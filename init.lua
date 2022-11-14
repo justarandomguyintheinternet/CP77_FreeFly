@@ -22,7 +22,8 @@ freefly = {
 		speedIncrementStep = 0.2,
 		angle = 0,
 		noWeapon = true,
-        timeStop = false
+        timeStop = false,
+        noController = false
     },
     config = require("modules/utils/config"),
     ui = require("modules/ui/generalSettingsUI"),
@@ -88,14 +89,21 @@ function freefly:new()
         end
     end)
 
-    registerHotkey("flymodsweitchangle", "Invert turning angle", function()
-        self.settings.angle = -self.settings.angle
-        self.config.saveFile("config/config.json", self.settings)
+    registerInput("freeFlySwitch", "Invert turning angle", function(down)
+        if down then
+            self.settings.angle = - self.settings.angle
+            self.config.saveFile("config/config.json", self.settings)
+        end
     end)
 
-    registerHotkey("freeflyActivation", "ActivationKey", function()
-        self.runtimeData.active = not self.runtimeData.active
-        self.logic.toggleFlight(self, self.runtimeData.active)
+    registerInput("freeflyActivationIn", "Activation Key", function(down)
+        if down and not self.runtimeData.active then
+            self.runtimeData.active = true
+            self.logic.toggleFlight(self, self.runtimeData.active)
+        elseif down and self.runtimeData.active then
+            self.runtimeData.active = false
+            self.logic.toggleFlight(self, self.runtimeData.active)
+        end
     end)
 
     return self

@@ -53,6 +53,11 @@ function settings.setupNative(mod)
         mod.settings.timeStop = state
         config.saveFile("config/config.json", mod.settings)
     end)
+
+    settings.nativeOptions["noController"] = nativeSettings.addSwitch("/freefly/gen", "Disable Controller Support", "Check this option to disable the ability to activate fly mode using a controller",  mod.settings.noController,  mod.defaultSettings.noController, function(state)
+        mod.settings.noController = state
+        config.saveFile("config/config.json", mod.settings)
+    end)
 end
 
 return settings

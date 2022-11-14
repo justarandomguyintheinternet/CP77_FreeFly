@@ -51,6 +51,14 @@ function gsUI.draw(mod)
             end
         end
 
+        mod.settings.noController, changed = ImGui.Checkbox("Disable Controller Support", mod.settings.noController)
+        if changed then
+            config.saveFile("config/config.json", mod.settings)
+            if mod.nUI.nuiInstalled then
+                mod.nUI.nui.setOption(mod.nUI.nativeOptions["noController"], mod.settings.noController)
+            end
+        end
+
         if ImGui.Button("Reset all settings") then
             mod.settings = utils.deepcopy(mod.defaultSettings)
             config.saveFile("config/config.json", mod.settings)

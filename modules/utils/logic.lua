@@ -150,6 +150,7 @@ function logic.registerObservers(mod)
                     end
                 elseif actionName == 'context_help' then
                     if actionType == 'BUTTON_PRESSED'then
+                        if freefly.settings.noController then return end
                         logic.lastSprint = logic.time
                         if logic.lastSprint - logic.lastReload < 0.2 and logic.time - logic.lastToggled ~= 0 then
                                 mod.runtimeData.active = not mod.runtimeData.active
@@ -159,6 +160,7 @@ function logic.registerObservers(mod)
                     end
                 elseif actionName == 'one_click_confirm' then
                     if actionType == 'BUTTON_PRESSED'then
+                        if freefly.settings.noController then return end
                         logic.lastReload = logic.time
                         if logic.lastReload - logic.lastSprint < 0.2 and logic.time - logic.lastToggled ~= 0 then
                                 mod.runtimeData.active = not mod.runtimeData.active
@@ -208,6 +210,8 @@ function logic.fly(mod, dt)
         newPos = logic.calculateNewPos("down", newPos, mod.settings.speed * dt * 15)
 
         local angle = mod.settings.angle
+
+        if GetMountedVehicle(GetPlayer()) then return end
         Game.GetTeleportationFacility():Teleport(GetPlayer(), newPos , EulerAngles.new(0, 0, Game.GetPlayer():GetWorldYaw() + angle + logic.yaw))
 
         Game.Heal()
