@@ -17,11 +17,18 @@ end
 
 function miscUtil.tryNoWeapon(freefly, state)
     if freefly.settings.noWeapon and state then
-        Game.ApplyEffectOnPlayer("GameplayRestriction.NoCombat")
+        miscUtil.applyStatus("GameplayRestriction.NoCombat")
     else
-        local rmStatus = Game['StatusEffectHelper::RemoveStatusEffect;GameObjectTweakDBID']
-        rmStatus(GetPlayer(), "GameplayRestriction.NoCombat")
+        miscUtil.removeStatus("GameplayRestriction.NoCombat")
     end
+end
+
+function miscUtil.applyStatus(effect)
+    Game.GetStatusEffectSystem():ApplyStatusEffect(Game.GetPlayer():GetEntityID(), effect, Game.GetPlayer():GetRecordID(), Game.GetPlayer():GetEntityID())
+end
+
+function miscUtil.removeStatus(effect)
+    Game.GetStatusEffectSystem():RemoveStatusEffect(Game.GetPlayer():GetEntityID(), effect)
 end
 
 return miscUtil

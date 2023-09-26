@@ -43,7 +43,7 @@ function freefly:new()
 
         GameUI.OnSessionStart(function()
             self.runtimeData.inGame = true
-            self.logic.registerInput(GetPlayer())
+            self.logic.registerInput(Game.GetPlayer())
         end)
 
         GameUI.OnSessionEnd(function()
@@ -83,9 +83,9 @@ function freefly:new()
 
     registerForEvent("onShutdown", function()
         if self.runtimeData.active then
-            Game.RemoveEffectPlayer("GameplayRestriction.NoMovement")
-            Game.RemoveEffectPlayer("GameplayRestriction.NoZooming")
-            Game.RemoveEffectPlayer("GameplayRestriction.NoCombat")
+            miscUtil.removeStatus("GameplayRestriction.NoMovement")
+            miscUtil.removeStatus("GameplayRestriction.NoZooming")
+            miscUtil.removeStatus("GameplayRestriction.NoCombat")
         end
     end)
 

@@ -187,20 +187,20 @@ function logic.toggleFlight(mod, state)
         utils.tryNoWeapon(mod, state)
 
         if state then
-                Game.ApplyEffectOnPlayer("GameplayRestriction.NoMovement")
-                Game.ApplyEffectOnPlayer("GameplayRestriction.NoZooming")
-                if mod.settings.timeStop then
-                        Game.SetTimeDilation(0.000000001)
-                end
+            miscUtil.applyStatus("GameplayRestriction.NoZooming")
+            miscUtil.applyStatus("GameplayRestriction.NoMovement")
+            if mod.settings.timeStop then
+                Game.GetTimeSystem():SetTimeDilation("console", 0.000000001)
+            end
         elseif not state then
-                Game.RemoveEffectPlayer("GameplayRestriction.NoMovement")
-                Game.RemoveEffectPlayer("GameplayRestriction.NoZooming")
-                Game.SetTimeDilation(0)
+            miscUtil.removeStatus("GameplayRestriction.NoZooming")
+            miscUtil.removeStatus("GameplayRestriction.NoMovement")
+            Game.GetTimeSystem():UnsetTimeDilation("console")
         end
 end
 
 function logic.fly(mod, dt)
-        local newPos = GetPlayer():GetWorldPosition()
+        local newPos = Game.GetPlayer():GetWorldPosition()
 
         newPos = logic.calculateNewPos("forward", newPos, mod.settings.speed * dt * 15)
         newPos = logic.calculateNewPos("backwards", newPos, mod.settings.speed * dt * 15)
@@ -211,8 +211,8 @@ function logic.fly(mod, dt)
 
         local angle = mod.settings.angle
 
-        if GetMountedVehicle(GetPlayer()) then return end
-        Game.GetTeleportationFacility():Teleport(GetPlayer(), newPos , EulerAngles.new(0, 0, Game.GetPlayer():GetWorldYaw() + angle + logic.yaw))
+        if Game.GetPlayer():GetMountedVehicle() then return end
+        Game.GetTeleportationFacility():Teleport(Game.GetPlayer(), newPos , EulerAngles.new(0, 0, Game.GetPlayer():GetWorldYaw() + angle + logic.yaw))
 
         Game.Heal()
 end
