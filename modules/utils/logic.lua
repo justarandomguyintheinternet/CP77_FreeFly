@@ -128,7 +128,7 @@ function logic.registerObservers(mod)
                     elseif actionType == 'BUTTON_RELEASED' then
                         logic.analogUp = 0
                     end
-                elseif actionName == 'ChoiceScrollUp' then
+                elseif actionName == 'NextWeapon' then
                     if actionType == 'BUTTON_PRESSED'then
                         if mod.runtimeData.active then
                                 mod.settings.speed = mod.settings.speed + mod.settings.speedIncrementStep
@@ -138,7 +138,7 @@ function logic.registerObservers(mod)
                                 mod.settings.speed = 0
                         end
                     end
-                elseif actionName == 'ChoiceScrollDown' then
+                elseif actionName == 'PreviousWeapon' then
                     if actionType == 'BUTTON_PRESSED'then
                         if mod.runtimeData.active then
                                 mod.settings.speed = mod.settings.speed - mod.settings.speedIncrementStep
