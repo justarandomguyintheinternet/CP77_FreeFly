@@ -200,7 +200,7 @@ function logic.toggleFlight(mod, state)
 end
 
 function logic.fly(mod, dt)
-        local newPos = Game.GetPlayer():GetWorldPosition()
+        local newPos = GetPlayer():GetWorldPosition()
 
         newPos = logic.calculateNewPos("forward", newPos, mod.settings.speed * dt * 15)
         newPos = logic.calculateNewPos("backwards", newPos, mod.settings.speed * dt * 15)
@@ -211,10 +211,10 @@ function logic.fly(mod, dt)
 
         local angle = mod.settings.angle
 
-        if Game.GetPlayer():GetMountedVehicle() then return end
-        Game.GetTeleportationFacility():Teleport(Game.GetPlayer(), newPos , EulerAngles.new(0, 0, Game.GetPlayer():GetWorldYaw() + angle + logic.yaw))
+        if GetPlayer():GetMountedVehicle() then return end
+        Game.GetTeleportationFacility():Teleport(GetPlayer(), newPos , EulerAngles.new(0, 0, GetPlayer():GetWorldYaw() + angle + logic.yaw))
 
-        Game.Heal()
+        Game.GetStatPoolsSystem():RequestSettingStatPoolValue(GetPlayer():GetEntityID(), gamedataStatPoolType.Health, 100, nil)
 end
 
 function logic.calculateNewPos(direction, newPos, speed)

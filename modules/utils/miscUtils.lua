@@ -24,11 +24,11 @@ function miscUtil.tryNoWeapon(freefly, state)
 end
 
 function miscUtil.applyStatus(effect)
-    Game.GetStatusEffectSystem():ApplyStatusEffect(Game.GetPlayer():GetEntityID(), effect, Game.GetPlayer():GetRecordID(), Game.GetPlayer():GetEntityID())
+    Game.GetStatusEffectSystem():ApplyStatusEffect(GetPlayer():GetEntityID(), effect, GetPlayer():GetRecordID(), GetPlayer():GetEntityID())
 end
 
 function miscUtil.removeStatus(effect)
-    Game.GetStatusEffectSystem():RemoveStatusEffect(Game.GetPlayer():GetEntityID(), effect)
+    Game.GetStatusEffectSystem():RemoveStatusEffect(GetPlayer():GetEntityID(), effect)
 end
 
 return miscUtil

@@ -43,7 +43,7 @@ function freefly:new()
 
         GameUI.OnSessionStart(function()
             self.runtimeData.inGame = true
-            self.logic.registerInput(Game.GetPlayer())
+            self.logic.registerInput(GetPlayer())
         end)
 
         GameUI.OnSessionEnd(function()

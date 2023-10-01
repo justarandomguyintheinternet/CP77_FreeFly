@@ -298,7 +298,7 @@ local function updateContext(oldContext, newContext)
 end
 
 local function refreshCurrentState()
-	local player = Game.GetPlayer()
+	local player = GetPlayer()
 	local blackboardDefs = Game.GetAllBlackboardDefs()
 	local blackboardUI = Game.GetBlackboardSystem():Get(blackboardDefs.UI_System)
 	local blackboardVH = Game.GetBlackboardSystem():Get(blackboardDefs.UI_ActiveVehicleData)
@@ -515,7 +515,7 @@ local function initialize(event)
 		Observe('QuestTrackerGameController', 'OnUninitialize', function()
 			--spdlog.error(('QuestTrackerGameController::OnUninitialize()'))
 
-			if Game.GetPlayer() == nil then
+			if GetPlayer() == nil then
 				updateDetached(true)
 				updateSceneTier(1)
 				updateContext()
