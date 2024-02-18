@@ -11,6 +11,7 @@ logic = {
         analogBackwards = 0,
         analogRight = 0,
         analogLeft = 0,
+        turbo = 0,
         analogUp = 0,
         analogDown = 0,
 
@@ -22,6 +23,7 @@ function logic.registerInput(this)
         this:UnregisterInputListener(this, 'Back')
         this:UnregisterInputListener(this, 'Right')
         this:UnregisterInputListener(this, 'Left')
+        this:UnregisterInputListener(this, 'Dodge')
         this:UnregisterInputListener(this, 'ToggleSprint')
         this:UnregisterInputListener(this, 'Jump')
         this:UnregisterInputListener(this, 'ChoiceScrollUp')
@@ -33,6 +35,7 @@ function logic.registerInput(this)
         this:RegisterInputListener(this, 'Back')
         this:RegisterInputListener(this, 'Right')
         this:RegisterInputListener(this, 'Left')
+        this:RegisterInputListener(this, 'Dodge')
         this:RegisterInputListener(this, 'ToggleSprint')
         this:RegisterInputListener(this, 'Jump')
         this:RegisterInputListener(this, 'ChoiceScrollUp')
@@ -115,6 +118,12 @@ function logic.registerObservers(mod)
                         logic.analogLeft = 1
                     elseif actionType == 'BUTTON_RELEASED' then
                         logic.analogLeft = 0
+                    end
+                elseif actionName == 'Dodge' then
+                    if actionType == 'BUTTON_PRESSED' then
+                        logic.turbo = 1
+                    elseif actionType == 'BUTTON_RELEASED' then
+                        logic.turbo = 0
                     end
                 elseif actionName == 'ToggleSprint' and logic.time - logic.lastToggled > 0.2 then
                     if actionType == 'BUTTON_PRESSED' then
@@ -230,6 +239,10 @@ function logic.calculateNewPos(direction, newPos, speed)
                 speed = speed * logic.analogUp
         elseif direction == "down" then
                 speed = speed * logic.analogDown
+        end
+
+        if logic.turbo == 1 then
+            speed = speed * 10
         end
 
         local vec
