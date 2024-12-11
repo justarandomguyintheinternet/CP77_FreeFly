@@ -2,7 +2,8 @@ name: pack
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
@@ -11,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Setup folder
+      - name: Setup folders
         run: |
           cd ${{ github.workspace }}
           sudo mkdir -p /freeflyPacked/bin/x64/plugins/cyber_engine_tweaks/mods/freefly/
@@ -22,7 +23,8 @@ jobs:
           sudo cp -r modules /freeflyPacked/bin/x64/plugins/cyber_engine_tweaks/mods/freefly/
           sudo cp -r init.lua /freeflyPacked/bin/x64/plugins/cyber_engine_tweaks/mods/freefly/
       - name: Upload zip
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
-            name: freeflyPacked
-            path: /freeflyPacked/
+          name: freeflyPacked
+          path: /freeflyPacked/
+          include-hidden-files: true
