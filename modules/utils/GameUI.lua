@@ -16,7 +16,10 @@ end)
 ```
 ]]
 
-local GameUI = { version = '1.1.7' }
+local GameUI = {
+	version = '1.2.3',
+	framework = '1.29.0'
+}
 
 GameUI.Event = {
 	Braindance = 'Braindance',
@@ -173,6 +176,9 @@ local menuScenarios = {
 	['MenuScenario_CharacterCustomization'] = { menu = 'NewGame', submenu = 'Customization' },
 	['MenuScenario_ClippedMenu'] = { menu = 'ClippedMenu', submenu = false },
 	['MenuScenario_Credits'] = { menu = 'MainMenu', submenu = 'Credits' },
+	['MenuScenario_CreditsE1'] = { menu = 'MainMenu', submenu = 'Credits' },
+	['MenuScenario_CreditsPicker'] = { menu = 'MainMenu', submenu = 'Credits' },
+	['MenuScenario_CreditsPickerPause'] = { menu = 'PauseMenu', submenu = 'Credits' },
 	['MenuScenario_DeathMenu'] = { menu = 'DeathMenu', submenu = false },
 	['MenuScenario_Difficulty'] = { menu = 'NewGame', submenu = 'Difficulty' },
 	['MenuScenario_E3EndMenu'] = { menu = 'E3EndMenu', submenu = false },
@@ -298,7 +304,7 @@ local function updateContext(oldContext, newContext)
 end
 
 local function refreshCurrentState()
-	local player = GetPlayer()
+	local player = Game.GetPlayer()
 	local blackboardDefs = Game.GetAllBlackboardDefs()
 	local blackboardUI = Game.GetBlackboardSystem():Get(blackboardDefs.UI_System)
 	local blackboardVH = Game.GetBlackboardSystem():Get(blackboardDefs.UI_ActiveVehicleData)
@@ -515,7 +521,7 @@ local function initialize(event)
 		Observe('QuestTrackerGameController', 'OnUninitialize', function()
 			--spdlog.error(('QuestTrackerGameController::OnUninitialize()'))
 
-			if GetPlayer() == nil then
+			if Game.GetPlayer() == nil then
 				updateDetached(true)
 				updateSceneTier(1)
 				updateContext()
@@ -620,7 +626,7 @@ local function initialize(event)
 			['MenuScenario_PauseMenu'] = {
 				['OnSwitchToBrightnessSettings'] = 'Brightness',
 				['OnSwitchToControllerPanel'] = 'Controller',
-				['OnSwitchToCredits'] = 'Credits',
+				['OnCreditsPicker'] = 'Credits',
 				['OnSwitchToHDRSettings'] = 'HDR',
 				['OnSwitchToLoadGame'] = 'LoadGame',
 				['OnSwitchToSaveGame'] = 'SaveGame',
@@ -671,8 +677,8 @@ local function initialize(event)
 			end)
 		end
 
-		Observe('SingleplayerMenuGameController', 'OnSavesReady', function()
-			--spdlog.error(('SingleplayerMenuGameController::OnSavesReady()'))
+		Observe('SingleplayerMenuGameController', 'OnSavesForLoadReady', function()
+			--spdlog.error(('SingleplayerMenuGameController::OnSavesForLoadReady()'))
 
 			updateMenuScenario('MenuScenario_SingleplayerMenu')
 
@@ -788,39 +794,27 @@ local function initialize(event)
 	if required[GameUI.Event.FastTravel] and not initialized[GameUI.Event.FastTravel] then
 		local fastTravelStart
 
-		Observe('FastTravelSystem', 'OnToggleFastTravelAvailabilityOnMapRequest', function(_, request)
-			if type(request) ~= 'userdata' then
-				request = _
-			end
+		Observe('FastTravelSystem', 'OnUpdateFastTravelPointRecordRequest', function(_, request)
+			--spdlog.error(('FastTravelSystem::OnUpdateFastTravelPointRecordRequest()'))
 
-			--spdlog.error(('FastTravelSystem::OnToggleFastTravelAvailabilityOnMapRequest()'))
-
-			if request.isEnabled then
-				fastTravelStart = request.pointRecord
-			end
+            fastTravelStart = request.pointRecord
 		end)
 
-		Observe('FastTravelSystem', 'OnPerformFastTravelRequest', function(_, request)
-			if type(request) ~= 'userdata' then
-				request = _
-			end
-
+		Observe('FastTravelSystem', 'OnPerformFastTravelRequest', function(self, request)
 			--spdlog.error(('FastTravelSystem::OnPerformFastTravelRequest()'))
 
-			local fastTravelDestination = request.pointData.pointRecord
+			if self.isFastTravelEnabledOnMap then
+                local fastTravelDestination = request.pointData and request.pointData.pointRecord or nil
 
-			if tostring(fastTravelStart) ~= tostring(fastTravelDestination) then
-				updateLoading(true)
-				updateFastTravel(true)
-				notifyObservers()
+                if tostring(fastTravelStart) ~= tostring(fastTravelDestination) then
+                    updateLoading(true)
+                    updateFastTravel(true)
+                    notifyObservers()
+                end
 			end
 		end)
 
 		Observe('FastTravelSystem', 'OnLoadingScreenFinished', function(_, finished)
-			if type(finished) ~= 'boolean' then
-				finished = _
-			end
-
 			--spdlog.error(('FastTravelSystem::OnLoadingScreenFinished(%s)'):format(tostring(finished)))
 
 			if isFastTravel and finished then

@@ -16,8 +16,13 @@ end
 
 function config.loadFile(path)
     local file = io.open(path, "r")
-    local config = json.decode(file:read("*a"))
+    local config = {}
+
+    pcall(function ()
+        config = json.decode(file:read("*a"))
+    end)
     file:close()
+
     return config
 end
 
