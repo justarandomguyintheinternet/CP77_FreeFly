@@ -7,7 +7,7 @@ gsUI = {}
 
 function gsUI.draw(mod)
     CPS:setThemeBegin()
-	if (ImGui.Begin("FreeFly 2.3", ImGuiWindowFlags.AlwaysAutoResize)) then
+	if (ImGui.Begin("FreeFly 2.4", ImGuiWindowFlags.AlwaysAutoResize)) then
         mod.settings.speed, changed = ImGui.SliderFloat("Fly Speed", mod.settings.speed, 0.001, 50, "%.2f")
         if changed then
             config.saveFile("config/config.json", mod.settings)
