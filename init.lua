@@ -23,7 +23,8 @@ freefly = {
 		angle = 0,
 		noWeapon = true,
         timeStop = false,
-        noController = false
+        noController = false,
+        lockVertical = false
     },
     config = require("modules/utils/config"),
     ui = require("modules/ui/generalSettingsUI"),
@@ -36,6 +37,7 @@ function freefly:new()
         self.config.tryCreateConfig("config/config.json", self.defaultSettings)
         self.config.backwardComp("config/config.json", self.defaultSettings)
         self.settings = self.config.loadFile("config/config.json")
+        self.settings.speed = math.max(self.settings.speed, 0.001)
 
         Observe('RadialWheelController', 'OnIsInMenuChanged', function(_, isInMenu) -- Setup observer and GameUI to detect inGame / inMenu
             self.runtimeData.inMenu = isInMenu

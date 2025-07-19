@@ -196,12 +196,12 @@ end
 function logic.fly(mod, dt)
         local newPos = GetPlayer():GetWorldPosition()
 
-        newPos = logic.calculateNewPos("forward", newPos, mod.settings.speed * dt * 15)
-        newPos = logic.calculateNewPos("backwards", newPos, mod.settings.speed * dt * 15)
-        newPos = logic.calculateNewPos("right", newPos, mod.settings.speed * dt * 15)
-        newPos = logic.calculateNewPos("left", newPos, mod.settings.speed * dt * 15)
-        newPos = logic.calculateNewPos("up", newPos, mod.settings.speed * dt * 15)
-        newPos = logic.calculateNewPos("down", newPos, mod.settings.speed * dt * 15)
+        newPos = logic.calculateNewPos("forward", newPos, mod.settings.speed * dt * 15, mod)
+        newPos = logic.calculateNewPos("backwards", newPos, mod.settings.speed * dt * 15, mod)
+        newPos = logic.calculateNewPos("right", newPos, mod.settings.speed * dt * 15, mod)
+        newPos = logic.calculateNewPos("left", newPos, mod.settings.speed * dt * 15, mod)
+        newPos = logic.calculateNewPos("up", newPos, mod.settings.speed * dt * 15, mod)
+        newPos = logic.calculateNewPos("down", newPos, mod.settings.speed * dt * 15, mod)
 
         local angle = mod.settings.angle
 
@@ -211,7 +211,7 @@ function logic.fly(mod, dt)
         Game.GetStatPoolsSystem():RequestSettingStatPoolValue(GetPlayer():GetEntityID(), gamedataStatPoolType.Health, 100, nil)
 end
 
-function logic.calculateNewPos(direction, newPos, speed)
+function logic.calculateNewPos(direction, newPos, speed, mod)
         if direction == "forward" then
             speed = speed * logic.analogForward
         elseif direction == "backwards" then
@@ -228,7 +228,7 @@ function logic.calculateNewPos(direction, newPos, speed)
 
         local vec
         if direction == "forward" or direction == "backwards" then
-            vec = Game.GetCameraSystem():GetActiveCameraForward()
+            vec = mod.settings.lockVertical and GetPlayer():GetWorldForward() or Game.GetCameraSystem():GetActiveCameraForward()
         elseif direction == "right" or direction == "left" then
             vec = Game.GetCameraSystem():GetActiveCameraRight()
         end

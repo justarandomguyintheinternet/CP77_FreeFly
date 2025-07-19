@@ -58,6 +58,11 @@ function settings.setupNative(mod)
         mod.settings.noController = state
         config.saveFile("config/config.json", mod.settings)
     end)
+
+    settings.nativeOptions["lockVertical"] = nativeSettings.addSwitch("/freefly/gen", "Ignore Camera Angle", "Check this option to lock vertical movement from looking up / down while flying",  mod.settings.lockVertical,  mod.defaultSettings.lockVertical, function(state)
+        mod.settings.lockVertical = state
+        config.saveFile("config/config.json", mod.settings)
+    end)
 end
 
 return settings

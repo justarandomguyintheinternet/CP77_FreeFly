@@ -59,6 +59,14 @@ function gsUI.draw(mod)
             end
         end
 
+        mod.settings.lockVertical, changed = ImGui.Checkbox("Ignore Camera Angle", mod.settings.lockVertical)
+        if changed then
+            config.saveFile("config/config.json", mod.settings)
+            if mod.nUI.nuiInstalled then
+                mod.nUI.nui.setOption(mod.nUI.nativeOptions["lockVertical"], mod.settings.lockVertical)
+            end
+        end
+
         if ImGui.Button("Reset all settings") then
             mod.settings = utils.deepcopy(mod.defaultSettings)
             config.saveFile("config/config.json", mod.settings)
