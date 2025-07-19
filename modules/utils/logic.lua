@@ -131,21 +131,15 @@ function logic.registerObservers(mod)
                 elseif actionName == 'NextWeapon' then
                     if actionType == 'BUTTON_PRESSED'then
                         if mod.runtimeData.active then
-                                mod.settings.speed = mod.settings.speed + mod.settings.speedIncrementStep
-                                config.saveFile("config/config.json", mod.settings)
-                        end
-                        if mod.settings.speed < 0 then
-                                mod.settings.speed = 0
+                            mod.settings.speed = mod.settings.speed + mod.settings.speedIncrementStep
+                            config.saveFile("config/config.json", mod.settings)
                         end
                     end
                 elseif actionName == 'PreviousWeapon' then
                     if actionType == 'BUTTON_PRESSED'then
                         if mod.runtimeData.active then
-                                mod.settings.speed = mod.settings.speed - mod.settings.speedIncrementStep
-                                config.saveFile("config/config.json", mod.settings)
-                        end
-                        if mod.settings.speed < 0 then
-                                mod.settings.speed = 0
+                            mod.settings.speed = math.max(mod.settings.speed - mod.settings.speedIncrementStep, 0.001)
+                            config.saveFile("config/config.json", mod.settings)
                         end
                     end
                 elseif actionName == 'context_help' then
@@ -153,9 +147,9 @@ function logic.registerObservers(mod)
                         if freefly.settings.noController then return end
                         logic.lastSprint = logic.time
                         if logic.lastSprint - logic.lastReload < 0.2 and logic.time - logic.lastToggled ~= 0 then
-                                mod.runtimeData.active = not mod.runtimeData.active
-                                logic.toggleFlight(mod, mod.runtimeData.active)
-                                logic.lastToggled = logic.time
+                            mod.runtimeData.active = not mod.runtimeData.active
+                            logic.toggleFlight(mod, mod.runtimeData.active)
+                            logic.lastToggled = logic.time
                         end
                     end
                 elseif actionName == 'one_click_confirm' then
@@ -163,22 +157,22 @@ function logic.registerObservers(mod)
                         if freefly.settings.noController then return end
                         logic.lastReload = logic.time
                         if logic.lastReload - logic.lastSprint < 0.2 and logic.time - logic.lastToggled ~= 0 then
-                                mod.runtimeData.active = not mod.runtimeData.active
-                                logic.toggleFlight(mod, mod.runtimeData.active)
+                            mod.runtimeData.active = not mod.runtimeData.active
+                            logic.toggleFlight(mod, mod.runtimeData.active)
                             logic.lastToggled = logic.time
                         end
                     end
                 end
 
                 if actionName == "CameraMouseX" then
-                local x = action:GetValue(action)
-                        local sens = Game.GetSettingsSystem():GetVar("/controls/fppcameramouse", "FPP_MouseX"):GetValue() / 2.9
-                        logic.yaw = - (x / 35) * sens
+                    local x = action:GetValue(action)
+                    local sens = Game.GetSettingsSystem():GetVar("/controls/fppcameramouse", "FPP_MouseX"):GetValue() / 2.9
+                    logic.yaw = - (x / 35) * sens
                 end
                 if actionName == "right_stick_x" then
-                local x = action:GetValue(action)
-                        local sens = Game.GetSettingsSystem():GetVar("/controls/fppcamerapad", "FPP_PadX"):GetValue() / 10
-                        logic.yaw = - x * 1.7 * sens
+                    local x = action:GetValue(action)
+                    local sens = Game.GetSettingsSystem():GetVar("/controls/fppcamerapad", "FPP_PadX"):GetValue() / 10
+                    logic.yaw = - x * 1.7 * sens
                 end
         end)
 end
@@ -219,37 +213,37 @@ end
 
 function logic.calculateNewPos(direction, newPos, speed)
         if direction == "forward" then
-                speed = speed * logic.analogForward
+            speed = speed * logic.analogForward
         elseif direction == "backwards" then
-                speed = speed * logic.analogBackwards
+            speed = speed * logic.analogBackwards
         elseif direction == "right" then
-                speed = speed * logic.analogRight
+            speed = speed * logic.analogRight
         elseif direction == "left" then
-                speed = speed * logic.analogLeft
+            speed = speed * logic.analogLeft
         elseif direction == "up" then
-                speed = speed * logic.analogUp
+            speed = speed * logic.analogUp
         elseif direction == "down" then
-                speed = speed * logic.analogDown
+            speed = speed * logic.analogDown
         end
 
         local vec
         if direction == "forward" or direction == "backwards" then
-                vec = Game.GetCameraSystem():GetActiveCameraForward()
+            vec = Game.GetCameraSystem():GetActiveCameraForward()
         elseif direction == "right" or direction == "left" then
-                vec = Game.GetCameraSystem():GetActiveCameraRight()
+            vec = Game.GetCameraSystem():GetActiveCameraRight()
         end
         if direction == "forward" or direction == "right" then
-                newPos.x = newPos.x + (vec.x * speed)
-                newPos.y = newPos.y + (vec.y * speed)
-                newPos.z = newPos.z + (vec.z * speed)
+            newPos.x = newPos.x + (vec.x * speed)
+            newPos.y = newPos.y + (vec.y * speed)
+            newPos.z = newPos.z + (vec.z * speed)
         elseif direction == "backwards" or direction == "left" then
-                newPos.x = newPos.x - (vec.x * speed)
-                newPos.y = newPos.y - (vec.y * speed)
-                newPos.z = newPos.z - (vec.z * speed)
+            newPos.x = newPos.x - (vec.x * speed)
+            newPos.y = newPos.y - (vec.y * speed)
+            newPos.z = newPos.z - (vec.z * speed)
         elseif direction == "up" then
-                newPos.z = newPos.z + (0.7 * speed)
+            newPos.z = newPos.z + (0.7 * speed)
         elseif direction == "down" then
-                newPos.z = newPos.z - (0.7 * speed)
+            newPos.z = newPos.z - (0.7 * speed)
         end
 
         return newPos
